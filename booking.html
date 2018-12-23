@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Lets Zoom</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      
+      #map {
+        height: 76%;
+
+
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+       .random{
+        position: absolute;
+        bottom:0%;
+        background-color: #1abc9c;
+        width:100%;
+        height:15%;
+        color:white;
+      }
+
+.head{
+background-color:  #1abc9c;
+color:white;
+padding-top: 10px;
+padding-left: 25px;
+padding-bottom: 10px;
+
+}
+      .random td,th{
+padding-left: 100px;
+text-align:center;
+      }
+
+.random th{
+
+border-bottom:2px dotted;
+padding-bottom: 15px;
+padding-top: 20px;
+
+}
+
+    
+.dest{
+height:40px;
+background-color: #1abc9c;
+color:white;
+border-color: #1abc9c;
+}
+    </style>
+  </head>
+  <body>
+    <div class="head">
+<h2>Loca Rides</h2>
+<input id="destination-input" class="dest" type="text" placeholder="Enter your destination location">
+    </div>
+    
+        <div id="map">
+        </div>
+
+
+<div class="random">
+    
+    <center><table>
+<tr> <th>Source </th><th>Destination</th><th>Fare</th><th>Confirm</th></tr>
+<tr> <td>Current Location </td><td id="edit">--</td><td id="fare">Fare</td><td >
+<input type="submit" onclick=" callme();" value="Confirm">
+</td></tr>
+</table></center>
+   </div>
+
+
+
+
+    <script>
+      function callme(){
+alert("     Booking Confirmed!!\n\nYour Cab Is On Your Way!!");
+      }
+
+      function initMap() {
+       
+   
+
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+          mapTypeControl: false,
+          center: {lat: 12.9175381, lng: 77.5249372},
+          zoom: 13
+        });
+         new AutocompleteDirectionsHandler(map);
+          
+          
+
+      }
+
+      function AutocompleteDirectionsHandler(map) {
+        this.map = map;
+        this.originPlaceId = null;
+        this.destinationPlaceId = null;
+      var center;
+  
+     
+var destinationInput = document.getElementById('destination-input');
+
+  
+        this.directionsService = new google.maps.DirectionsService;
+        this.directionsDisplay = new google.maps.DirectionsRenderer;
+        this.directionsDisplay.setMap(map);
+
+        
+        var destinationAutocomplete = new google.maps.places.Autocomplete(destinationInput, {placeIdOnly: true});
+       
+        this.setupPlaceChangedListener(destinationAutocomplete, 'DEST');
+
+        this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(destinationInput);
+
+          
+
+
+
+      }
+
+
+
+
+
+
+      AutocompleteDirectionsHandler.prototype.setupPlaceChangedListener = function(autocomplete, mode) {
+        var me = this;
+        autocomplete.bindTo('bounds', this.map);
+
+        autocomplete.addListener('place_changed', function() {
+          var place = autocomplete.getPlace();
+          if (!place.place_id) {
+            window.alert("Please select an option from the dropdown list.");
+            return;
+          }
+          if (mode === 'DEST')  {
+            me.destinationPlaceId = place.place_id;
+          }
+          me.route();
+        });
+
+      };
+
+
+
+      AutocompleteDirectionsHandler.prototype.route = function() {
+        var center=this;
+         navigator.geolocation.getCurrentPosition(function(position) {
+            center= {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+    
+       
+          });
+        if (!this.destinationPlaceId) {
+          return;
+        }
+       alert("Allow Location access and click OK");
+document.getElementById("edit").innerHTML=document.getElementById("destination-input").value;
+document.getElementById("fare").innerHTML=Math.floor(Math.random() * (700 - 300 + 1)) + 300;
+        var me = this;
+      
+
+          
+
+        this.directionsService.route({
+          origin: {lat: center.lat, lng: center.lng},//{'placeId': this.originPlaceId},
+          destination: {'placeId': this.destinationPlaceId},
+          travelMode: 'DRIVING'
+
+        }, function(response, status) {
+          if (status === 'OK') {
+            me.directionsDisplay.setDirections(response);
+          } else {
+            window.alert('Directions request failed due to ' + status);
+          }
+        });
+      };
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmLdKQTjC7xOC8jzA6ZP5cLUkezs-gA3w&libraries=places&callback=initMap"
+        async defer></script>
+  </body>
+</html>
