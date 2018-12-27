@@ -11,7 +11,7 @@
 
 
       }
-      
+      /* Optional: Makes the sample page fill the window. */
       html, body {
         height: 100%;
         margin: 0;
@@ -59,7 +59,7 @@ border-color: #1abc9c;
   <body>
     <div class="head">
 <h2>Loca Rides</h2>
-<input id="destination-input" class="dest" type="text" placeholder="Enter your destination location">
+<input id="destination-input" class="dest" type="text" placeholder="Enter your destination location" style="position:fixed;left:0px;top:89px;">
     </div>
     
         <div id="map">
@@ -87,27 +87,28 @@ alert("     Booking Confirmed!!\n\nYour Cab Is On Your Way!!");
       function initMap() {
        
    
-
+var destinationInput = document.getElementById('destination-input');
 
         var map = new google.maps.Map(document.getElementById('map'), {
           mapTypeControl: false,
           center: {lat: 12.9175381, lng: 77.5249372},
           zoom: 13
         });
-         new AutocompleteDirectionsHandler(map);
+
+
+         new AutocompleteDirectionsHandler(map,destinationInput);
           
           
 
       }
 
-      function AutocompleteDirectionsHandler(map) {
+      function AutocompleteDirectionsHandler(map,destinationInput) {
         this.map = map;
         this.originPlaceId = null;
         this.destinationPlaceId = null;
       var center;
   
      
-var destinationInput = document.getElementById('destination-input');
 
   
         this.directionsService = new google.maps.DirectionsService;
@@ -120,7 +121,12 @@ var destinationInput = document.getElementById('destination-input');
         this.setupPlaceChangedListener(destinationAutocomplete, 'DEST');
 
         this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(destinationInput);
- }
+
+          
+
+
+
+      }
 
 
 
